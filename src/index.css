@@ -1,15 +1,19 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 :root {
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-background-color: azure;
+background-color: #f1f1f1;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 body {
   height: 100vh;
+  font-family: "Jost", serif;
   margin: 0;
 }

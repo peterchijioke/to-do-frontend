@@ -1,32 +1,31 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LoginFormInputs,
-  loginSchema,
-} from "../../validation/login.validation";
 import { Link } from "react-router-dom";
+import {
+  SignupFormInputs,
+  signupSchema,
+} from "../../validation/signup.validation";
 
-export default function LoginForm() {
+export default function SignupForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormInputs>({
+    resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = (data: SignupFormInputs) => {
     console.log("Form Data: ", data);
   };
 
   return (
     <div className="md:w-[40rem] w-full h-fit bg-white mt-12 items-center flex flex-col p-8 rounded-xl">
       <div className="flex flex-col items-center">
-        <span className="font-semibold text-2xl text-amber-950">Login</span>
+        <span className="font-semibold text-2xl text-amber-950">Register</span>
         <span className="font-semibold text-xs text-amber-950">
-          Login to list and manage your todos
+          Register to list and manage your todos
         </span>
       </div>
       <form
@@ -35,6 +34,26 @@ export default function LoginForm() {
       >
         {/* Email Field */}
         <div className=" grid gap-5">
+          <div className="grid gap-2 w-full">
+            <label
+              className="text-sm font-semibold text-amber-950"
+              htmlFor="username"
+            >
+              Username
+            </label>
+            <input
+              className="w-full h-12 bg-white border border-amber-950 outline-none focus-visible:ring-0 text-amber-950 p-2 rounded-lg"
+              type="text"
+              id="username"
+              placeholder="Enter username"
+              {...register("email")}
+            />
+            {errors.username && (
+              <span className="text-red-500 text-sm">
+                {errors.username.message}
+              </span>
+            )}
+          </div>
           <div className="grid gap-2 w-full">
             <label
               className="text-sm font-semibold text-amber-950"
@@ -65,7 +84,7 @@ export default function LoginForm() {
               Password
             </label>
             <input
-              className="w-full h-12 bg-white border border-amber-950 outline-none focus-visible:ring-0 text-amber-950 px-2 rounded-lg"
+              className="w-full h-12 bg-white border border-amber-950 outline-none focus-visible:ring-0 text-amber-950 p-2 rounded-lg"
               type="password"
               id="password"
               placeholder="Enter password"
@@ -78,9 +97,9 @@ export default function LoginForm() {
             )}
           </div>
           <div className="  text-sm flex justify-end text-black gap-1">
-            Don't have an account?{" "}
-            <Link to={"/signup"} className="text-amber-950">
-              Signup
+            Already have an account?{" "}
+            <Link to={"/"} className="text-amber-950">
+              Login
             </Link>
           </div>
         </div>

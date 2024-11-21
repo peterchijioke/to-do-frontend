@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import Modal from "react-modal";
+import NewTaskForm from "./forms/NewTaskForm";
 
 function TaskModal({
   isOpen,
@@ -12,7 +12,7 @@ function TaskModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await axios.post("/api/tasks", { title, description });
@@ -22,26 +22,15 @@ function TaskModal({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onRequestClose={closeModal}>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-          required
-        />
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-          required
-        />
-        <button type="submit">Save Task</button>
-        <button onClick={closeModal}>Cancel</button>
-      </form>
-    </Modal>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-6">
+      <div className="w-full max-w-md p-6 bg-white  shadow-lg">
+        <h2 className="text-lg font-bold mb-4 text-gray-800">Add New Task</h2>
+        <NewTaskForm closeModal={closeModal} />
+      </div>
+    </div>
   );
 }
 
