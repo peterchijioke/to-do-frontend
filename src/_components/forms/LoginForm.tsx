@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,9 +6,13 @@ import {
   LoginFormInputs,
   loginSchema,
 } from "../../validation/login.validation";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { postApiService } from "../../service/auth.service";
+import useSWRMutation from "swr/mutation";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
+  const { trigger, isMutating } = useSWRMutation("/auth/login", postApiService);
   const {
     register,
     handleSubmit,
@@ -16,10 +20,23 @@ export default function LoginForm() {
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
   });
-
-  const onSubmit = (data: LoginFormInputs) => {
+  const navigation = useNavigate();
+  const onSubmit = useCallback(async (data: LoginFormInputs) => {
     console.log("Form Data: ", data);
-  };
+    try {
+      const response = await trigger({ ...data });
+      if (response.data && response.status) {
+        toast.success(response.message, { position: "top-right" });
+        navigation("/dashboard");
+        return;
+      }
+      if (!response.status) {
+        toast.error(response.message, { position: "top-right" });
+      }
+    } catch (error) {
+      console.log("SignupForm", error);
+    }
+  }, []);
 
   return (
     <div className="md:w-[40rem] w-full h-fit bg-white mt-12 items-center flex flex-col p-8 rounded-xl">

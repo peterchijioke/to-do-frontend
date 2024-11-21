@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   SignupFormInputs,
   signupSchema,
 } from "../../validation/signup.validation";
+import useSWRMutation from "swr/mutation";
+import { postApiService } from "../../service/auth.service";
+import { Loader } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function SignupForm() {
+  const { trigger, isMutating } = useSWRMutation(
+    "/auth/register",
+    postApiService
+  );
   const {
     register,
     handleSubmit,
@@ -16,9 +24,25 @@ export default function SignupForm() {
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data: SignupFormInputs) => {
+  const navigation = useNavigate();
+
+  const onSubmit = useCallback(async (data: SignupFormInputs) => {
     console.log("Form Data: ", data);
-  };
+    try {
+      const response = await trigger({ ...data });
+      if (response.data && response.status) {
+        toast.success(response.message, { position: "top-right" });
+        navigation("/");
+        return;
+      }
+
+      if (!response.status) {
+        toast.error(response.message, { position: "top-right" });
+      }
+    } catch (error) {
+      console.log("SignupForm", error);
+    }
+  }, []);
 
   return (
     <div className="md:w-[40rem] w-full h-fit bg-white mt-12 items-center flex flex-col p-8 rounded-xl">
@@ -46,7 +70,7 @@ export default function SignupForm() {
               type="text"
               id="username"
               placeholder="Enter username"
-              {...register("email")}
+              {...register("username")}
             />
             {errors.username && (
               <span className="text-red-500 text-sm">
@@ -107,10 +131,15 @@ export default function SignupForm() {
         {/* Submit Button */}
         <div className="w-full pt-9">
           <button
+            disabled={isMutating}
             type="submit"
             className="w-full bg-amber-950 text-white h-12 hover:bg-amber-800"
           >
-            Done
+            {isMutating ? (
+              <Loader className=" size-3 text-white animate-spin" />
+            ) : (
+              "Done"
+            )}
           </button>
         </div>
       </form>

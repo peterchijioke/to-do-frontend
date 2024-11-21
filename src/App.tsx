@@ -10,31 +10,36 @@ import TaskDashboard from "./pages/dashboard";
 import Navigation from "./_components/Navigation";
 import SignupPage from "./pages/Signup";
 import { NotFoundPage } from "./_components/NotFoundPage";
+import { Toaster } from "react-hot-toast";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = true;
+  const isAuthenticated = localStorage.getItem("userToken");
   return isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
 };
 
 export default function App() {
   return (
-    <div className="w-full h-full justify-center flex">
-      <Router>
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              // <ProtectedRoute>
-              <TaskDashboard />
-              // </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-    </div>
+    <>
+      <div className="w-full h-full justify-center flex">
+        <Router>
+          <Navigation />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <TaskDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </div>
+
+      <Toaster />
+    </>
   );
 }
