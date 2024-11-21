@@ -23,10 +23,6 @@ const TaskList: React.FC = () => {
     setModalIsOpen(true);
   };
 
-  // const handleCloseModal = () => {
-  //   setSelectedTask(null);
-  //   setIsModalOpen(false);
-  // };
   const handleToggleComplete = (taskId: string) => {};
 
   return (
