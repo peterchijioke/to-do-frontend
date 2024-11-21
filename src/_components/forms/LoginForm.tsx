@@ -10,6 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { postApiService } from "../../service/auth.service";
 import useSWRMutation from "swr/mutation";
 import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
 
 export default function LoginForm() {
   const { trigger, isMutating } = useSWRMutation("/auth/login", postApiService);
@@ -105,10 +106,15 @@ export default function LoginForm() {
         {/* Submit Button */}
         <div className="w-full pt-9">
           <button
+            disabled={isMutating}
             type="submit"
             className="w-full bg-amber-950 text-white h-12 hover:bg-amber-800"
           >
-            Done
+            {isMutating ? (
+              <Loader className=" size-3 text-white animate-spin" />
+            ) : (
+              "Done"
+            )}
           </button>
         </div>
       </form>
