@@ -1,8 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 
 export default function Navigation() {
+  const authToken = useMemo(
+    () => localStorage.getItem("userToken"),
+    [localStorage.getItem("userToken")]
+  );
+  const navigation = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("userToken");
+    navigation("/");
+  };
   return (
     <nav className=" h-20 bg-white fixed shadow w-full flex justify-center py-3">
       <div className="  container w-full flex justify-between items-center gap-2">
@@ -21,12 +30,21 @@ export default function Navigation() {
           >
             Dashboard
           </Link>
-          <Link
-            className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
-            to="/"
-          >
-            Login
-          </Link>
+          {authToken ? (
+            <button
+              onClick={logout}
+              className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
+              to="/"
+            >
+              Login
+            </Link>
+          )}
           <Link
             className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
             to="/signup"

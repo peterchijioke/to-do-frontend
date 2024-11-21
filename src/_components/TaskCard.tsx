@@ -49,7 +49,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
           Edit
         </button>
         <button
-          onClick={() => onDelete(task.id)}
+          onClick={() => onDelete(task.uuid)}
           className="px-3 w-full md:w-28 py-3 text-sm text-white bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
         >
           Delete

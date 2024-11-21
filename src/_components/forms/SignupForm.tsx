@@ -7,7 +7,7 @@ import {
   signupSchema,
 } from "../../validation/signup.validation";
 import useSWRMutation from "swr/mutation";
-import { postApiService } from "../../service/auth.service";
+import { postApiService } from "../../service/api.service";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
 

@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LoginFormInputs,
   loginSchema,
 } from "../../validation/login.validation";
 import { Link, useNavigate } from "react-router-dom";
-import { postApiService } from "../../service/auth.service";
+import { postApiService } from "../../service/api.service";
 import useSWRMutation from "swr/mutation";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
@@ -26,8 +25,9 @@ export default function LoginForm() {
     console.log("Form Data: ", data);
     try {
       const response = await trigger({ ...data });
-      if (response.data && response.status) {
+      if (response.token && response.status) {
         toast.success(response.message, { position: "top-right" });
+        localStorage.setItem("userToken", response.token);
         navigation("/dashboard");
         return;
       }

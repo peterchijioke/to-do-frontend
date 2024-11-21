@@ -4,11 +4,29 @@ export enum TaskStatus {
   Completed = "Completed",
 }
 
-export interface Task {
-   id: string;
+
+export type Tasks = Task[];
+
+// User Type
+export type User = {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  uuid: string;
+  username: string;
+  email: string;
+
+};
+
+// Task Type
+export type Task = {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  uuid: string;
+  status:TaskStatus;
   title: string;
   description: string;
-  status: TaskStatus;
-  createdAt: string;
-}
-export type Tasks = Task[];
+  dueDate: string;
+  creator: User;
+};

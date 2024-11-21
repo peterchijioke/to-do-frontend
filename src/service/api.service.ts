@@ -11,9 +11,17 @@ try {
  if (response.data) return response.data;
     return {};
   } catch (error: any) {
-    console.log('=============postApiService=======================');
-    console.log(error?.response?.data);
-    console.log('==============postApiService======================');
+    return error?.response?.data ?? error;
+  }
+}
+export const getApiService=async(
+  url:string
+)=>{
+try {
+  const response = await AxiosInterceptor.get(url)
+ if (response.data) return response.data;
+    return {};
+  } catch (error: any) {
     return error?.response?.data ?? error;
   }
 }

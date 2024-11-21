@@ -9,8 +9,9 @@ const AxiosInterceptor = axios.create({
 AxiosInterceptor.interceptors.request.use(
   (config: any) => {
     const token = localStorage.getItem("userToken");
+    
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${token}`;
     }
 
     console.log(`Request: ${config.method?.toUpperCase()} ${config.url}`);
@@ -31,7 +32,7 @@ AxiosInterceptor.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 401) {
         console.error("Unauthorized! Redirecting to login.");
-        window.location.href = "/login"; 
+        window.location.href = "/"; 
       } else if (error.response.status >= 500) {
         console.error("Server error:", error.response.data);
       }
