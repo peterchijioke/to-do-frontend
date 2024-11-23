@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Task, User } from '../types/task.type';
+import {  User } from '../types/task.type';
 import { persist } from 'zustand/middleware';
 
 interface TaskStoreProp {
