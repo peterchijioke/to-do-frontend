@@ -30,10 +30,21 @@ export const patchApiService=async(
   url:string, { arg }: { arg: any}
 )=>{
 try {
-  const response = await AxiosInterceptor.post(url,{
+  const response = await AxiosInterceptor.patch(url,{
     ...arg
   })
 
+ if (response.data) return response.data;
+    return {};
+  } catch (error: any) {
+    return error?.response?.data ?? error;
+  }
+}
+export const deleteApiService=async(
+  url:string
+)=>{
+try {
+  const response = await AxiosInterceptor.delete(url)
  if (response.data) return response.data;
     return {};
   } catch (error: any) {

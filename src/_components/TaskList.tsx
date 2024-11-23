@@ -2,28 +2,34 @@ import React, { useState } from "react";
 import TaskCard from "./TaskCard";
 import { Task, Tasks } from "../types/task.type";
 import ViewTaskModal from "./ViewTaskModal";
-import useSWR from "swr";
-import { getApiService } from "../service/api.service";
+import { deleteApiService } from "../service/api.service";
 import { Loader } from "lucide-react";
 import useTaskStore from "../providers/task.provider";
+import { KeyedMutator } from "swr";
+import toast from "react-hot-toast";
 
 interface Props {
   data: Tasks;
   isLoading: boolean;
+  openEditModal: () => void;
+  mutate: KeyedMutator<any>;
 }
-const TaskList: React.FC<Props> = ({ data, isLoading }) => {
+const TaskList: React.FC<Props> = ({
+  data,
+  isLoading,
+  openEditModal,
+  mutate,
+}) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
   const { setEditableTask } = useTaskStore();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
   const tasks: Tasks = data;
 
   const handleEdit = (task: Task) => {
     setEditableTask(task);
-  };
-
-  const handleDelete = (taskId: string) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-    }
+    openEditModal();
   };
 
   const handleView = (task: Task) => {
@@ -57,7 +63,7 @@ const TaskList: React.FC<Props> = ({ data, isLoading }) => {
                   task={task}
                   onView={handleView}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  mutate={mutate}
                 />
               ))}
             </>

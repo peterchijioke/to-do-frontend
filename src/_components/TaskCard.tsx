@@ -1,19 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { Task, TaskStatus } from "../types/task.type";
+import { deleteApiService } from "../service/api.service";
+import toast from "react-hot-toast";
+import { KeyedMutator } from "swr";
+import { Loader } from "lucide-react";
 
 type TaskCardProps = {
   task: Task;
   onView: (task: Task) => void;
   onEdit: (task: Task) => void;
-  onDelete: (taskId: string) => void;
+  mutate: KeyedMutator<any>;
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({
   task,
   onView,
   onEdit,
-  onDelete,
+  mutate,
 }) => {
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const onDelete = async (taskId: string) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      setDeleteLoading(true);
+      try {
+        const response = await deleteApiService(`/task/${taskId}`);
+        if (response?.status) {
+          toast.success(response.message ?? "Task deleted successfully", {
+            position: "top-right",
+          });
+          mutate();
+        } else {
+          toast.error(response.message ?? "Error occurred", {
+            position: "top-right",
+          });
+        }
+      } catch (error) {
+      } finally {
+        setDeleteLoading(false);
+      }
+    }
+  };
   return (
     <div className="border h-full bg-white border-gray-300 rounded-lg shadow-sm p-4 space-y-2">
       <h2 className="text-lg font-semibold text-gray-800">{task.title}</h2>
@@ -49,10 +75,15 @@ const TaskCard: React.FC<TaskCardProps> = ({
           Edit
         </button>
         <button
+          disabled={deleteLoading}
           onClick={() => onDelete(task.uuid)}
           className="px-3 w-full md:w-28 py-3 text-sm text-white bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
         >
-          Delete
+          {deleteLoading ? (
+            <Loader className=" size-3 text-white animate-spin" />
+          ) : (
+            "Delete"
+          )}
         </button>
       </div>
     </div>

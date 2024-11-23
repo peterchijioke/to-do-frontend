@@ -7,7 +7,6 @@ import useTaskStore from "../../providers/task.provider";
 function TaskDashboard() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { data: tasks, isLoading, mutate } = useSWR("/task", getApiService);
-  const { editableTask } = { editableTask: null };
 
   return (
     <>
@@ -24,13 +23,20 @@ function TaskDashboard() {
               Add New Task
             </button>
           </div>
-          <TaskList data={tasks?.data ?? []} isLoading={isLoading} />
+          <TaskList
+            mutate={mutate}
+            openEditModal={() => {
+              setModalIsOpen(!modalIsOpen);
+            }}
+            data={tasks?.data ?? []}
+            isLoading={isLoading}
+          />
         </div>
       </div>
 
       <TaskModal
         mutate={mutate}
-        isOpen={modalIsOpen || Boolean(editableTask)}
+        isOpen={modalIsOpen}
         closeModal={function (): void {
           setModalIsOpen(!modalIsOpen);
         }}

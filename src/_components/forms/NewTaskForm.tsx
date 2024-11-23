@@ -20,12 +20,9 @@ type Props = {
 
 export default function NewTaskForm({ closeModal, mutate }: Props) {
   const { editableTask, setEditableTask } = useTaskStore();
-  const { trigger, isMutating } = useSWRMutation(
-    editableTask ? `/task/${editableTask?.uuid}` : "",
-    postApiService
-  );
+  const { trigger, isMutating } = useSWRMutation(`/task`, postApiService);
   const { trigger: editHandler, isMutating: isEditing } = useSWRMutation(
-    "/task",
+    editableTask ? `/task/${editableTask?.uuid}` : "",
     patchApiService
   );
 
@@ -66,13 +63,13 @@ export default function NewTaskForm({ closeModal, mutate }: Props) {
     }
   };
 
-  // useEffect(() => {
-  //   if (editableTask) {
-  //     setValue("description", editableTask?.description);
-  //     setValue("dueDate", new Date(editableTask?.dueDate));
-  //     setValue("title", editableTask?.title);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (editableTask) {
+      setValue("description", editableTask?.description);
+      setValue("dueDate", new Date(editableTask?.dueDate));
+      setValue("title", editableTask?.title);
+    }
+  }, [editableTask]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
