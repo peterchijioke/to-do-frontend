@@ -8,10 +8,11 @@ export default function Navigation() {
     () => localStorage.getItem("userToken"),
     [localStorage.getItem("userToken")]
   );
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
   const navigation = useNavigate();
   const logout = () => {
     localStorage.removeItem("userToken");
+    setUser(null);
     navigation("/");
   };
   return (
