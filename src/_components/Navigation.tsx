@@ -1,15 +1,14 @@
 import React, { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
-import useGetAuthUser from "../hooks/useGetAuthUser";
+import useUserStore from "../providers/user.provider";
 
 export default function Navigation() {
-  const { user, userLoading } = useGetAuthUser();
-
   const authToken = useMemo(
     () => localStorage.getItem("userToken"),
     [localStorage.getItem("userToken")]
   );
+  const { user } = useUserStore();
   const navigation = useNavigate();
   const logout = () => {
     localStorage.removeItem("userToken");

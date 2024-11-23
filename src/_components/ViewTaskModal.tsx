@@ -1,19 +1,59 @@
 import React from "react";
 import { Task } from "../types/task.type";
+import { KeyedMutator } from "swr";
+import useSWRMutation from "swr/mutation";
+import { patchApiService } from "../service/api.service";
+import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
 
 type TaskModalProps = {
   isOpen: boolean;
   task: Task | null;
-  onToggleComplete: (taskId: string) => void;
   onClose: () => void;
+  mutate: KeyedMutator<any>;
 };
-
+enum TaskStatus {
+  Pending = "Pending",
+  InProgress = "In Progress",
+  Completed = "Completed",
+}
 const ViewTaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   task,
   onClose,
-  onToggleComplete,
+  mutate,
 }) => {
+  const { trigger: editHandler, isMutating: isEditing } = useSWRMutation(
+    `/task/${task?.uuid}`,
+    patchApiService
+  );
+
+  const onToggleComplete = async () => {
+    try {
+      if (!task) {
+        return;
+      }
+      const response = await editHandler({
+        status:
+          task.status === TaskStatus.Completed
+            ? TaskStatus.Pending
+            : TaskStatus.Completed,
+      });
+      if (response.status && response?.data) {
+        mutate();
+      } else {
+        toast.error(response?.message ?? "Error: Occurred, please try again");
+      }
+    } catch (error) {
+      console.log(
+        "========onToggleComplete Error============================",
+        error
+      );
+    } finally {
+      onClose();
+    }
+  };
+
   if (!isOpen || !task) return null;
 
   return (
@@ -31,16 +71,22 @@ const ViewTaskModal: React.FC<TaskModalProps> = ({
           {new Date(task.createdAt).toLocaleString()}
         </p>
         <button
-          onClick={() => onToggleComplete(task.id)}
-          className={`mt-4 w-full px-4 py-2 text-sm rounded focus:outline-none ${
+          onClick={onToggleComplete}
+          className={`mt-4 w-full px-4 py-2 text-sm  focus:outline-none ${
             task.status === "Completed"
               ? "bg-gray-400 text-white hover:bg-gray-500"
               : "bg-green-500 text-white hover:bg-green-600"
           }`}
         >
-          {task.status === "Completed"
-            ? "Mark as Uncompleted"
-            : "Mark as Completed"}
+          {isEditing ? (
+            <Loader className=" animate-spin size-3" />
+          ) : (
+            <>
+              {task.status === TaskStatus.Completed
+                ? "Mark as Pending"
+                : "Mark as Completed"}
+            </>
+          )}
         </button>
         <button
           onClick={onClose}

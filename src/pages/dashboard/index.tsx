@@ -1,12 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskModal from "../../_components/TaskModal";
 import TaskList from "../../_components/TaskList";
 import useSWR from "swr";
 import { getApiService } from "../../service/api.service";
-import useTaskStore from "../../providers/task.provider";
+import useUserStore from "../../providers/user.provider";
+import PaginationControls from "../../_components/PaginationControls";
 function TaskDashboard() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { data: tasks, isLoading, mutate } = useSWR("/task", getApiService);
+  const { setUser } = useUserStore();
+  const { data: userData } = useSWR("/auth", getApiService);
+
+  const [page, setPage] = useState({ page: 1, limit: 1 });
+
+  const {
+    data: tasks,
+    isLoading,
+    mutate,
+  } = useSWR(`/task?page=${page.page}&limit=${page.limit}`, getApiService);
+  const pagination = tasks?.pagination;
+
+  const handlePageChange = (newPage: number) => {
+    if (pagination && (newPage < 1 || newPage > pagination.totalPages)) {
+      return;
+    }
+    setPage((prev) => ({ ...prev, page: newPage }));
+  };
+
+  useEffect(() => {
+    if (userData?.data) {
+      setUser(userData?.data);
+    } else {
+      setUser(null);
+    }
+  }, [userData?.data]);
 
   return (
     <>
@@ -31,6 +57,16 @@ function TaskDashboard() {
             data={tasks?.data ?? []}
             isLoading={isLoading}
           />
+
+          <div className="flex justify-end">
+            {pagination && (
+              <PaginationControls
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </div>
         </div>
       </div>
 

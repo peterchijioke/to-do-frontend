@@ -37,8 +37,6 @@ const TaskList: React.FC<Props> = ({
     setModalIsOpen(true);
   };
 
-  const handleToggleComplete = (taskId: string) => {};
-
   if (tasks.length === 0) {
     return (
       <div className="flex h-full items-center justify-center py-6">
@@ -72,7 +70,7 @@ const TaskList: React.FC<Props> = ({
       </div>
 
       <ViewTaskModal
-        onToggleComplete={handleToggleComplete}
+        mutate={mutate}
         isOpen={modalIsOpen}
         onClose={() => {
           setModalIsOpen(!modalIsOpen);
