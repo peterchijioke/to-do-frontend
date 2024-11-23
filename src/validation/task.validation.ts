@@ -5,6 +5,11 @@ export const newTaskSchema = z.object({
     .string()
     .min(1, "Title is required")
     .max(100, "Title must not exceed 100 characters"),
+  dueDate: z
+    .date({
+      required_error:'Due date is required'
+    })
+    ,
   description: z
     .string()
     .min(1, "Description is required")

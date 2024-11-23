@@ -25,3 +25,18 @@ try {
     return error?.response?.data ?? error;
   }
 }
+
+export const patchApiService=async(
+  url:string, { arg }: { arg: any}
+)=>{
+try {
+  const response = await AxiosInterceptor.post(url,{
+    ...arg
+  })
+
+ if (response.data) return response.data;
+    return {};
+  } catch (error: any) {
+    return error?.response?.data ?? error;
+  }
+}

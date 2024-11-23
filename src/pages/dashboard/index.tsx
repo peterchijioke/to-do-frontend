@@ -1,33 +1,13 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import TaskModal from "../../_components/TaskModal";
 import TaskList from "../../_components/TaskList";
-
+import useSWR from "swr";
+import { getApiService } from "../../service/api.service";
+import useTaskStore from "../../providers/task.provider";
 function TaskDashboard() {
-  const [tasks, setTasks] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalTasks, setTotalTasks] = useState(0);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const response = await axios.get(`/api/tasks?page=${page}`);
-      setTasks(response.data.tasks);
-      setTotalTasks(response.data.total);
-    };
-
-    fetchTasks();
-  }, [page]);
-
-  // const handleTaskToggle = async (taskId) => {
-  //   await axios.patch(`/api/tasks/${taskId}/toggle`)
-  //   setTasks(tasks.map(task => task.id === taskId ? { ...task, completed: !task.completed } : task))
-  // }
-
-  // const handleDelete = async (taskId) => {
-  //   await axios.delete(`/api/tasks/${taskId}`)
-  //   setTasks(tasks.filter(task => task.id !== taskId))
-  // }
+  const { data: tasks, isLoading, mutate } = useSWR("/task", getApiService);
+  const { editableTask } = { editableTask: null };
 
   return (
     <>
@@ -44,12 +24,13 @@ function TaskDashboard() {
               Add New Task
             </button>
           </div>
-          <TaskList />
+          <TaskList data={tasks?.data ?? []} isLoading={isLoading} />
         </div>
       </div>
 
       <TaskModal
-        isOpen={modalIsOpen}
+        mutate={mutate}
+        isOpen={modalIsOpen || Boolean(editableTask)}
         closeModal={function (): void {
           setModalIsOpen(!modalIsOpen);
         }}

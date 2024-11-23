@@ -5,15 +5,20 @@ import ViewTaskModal from "./ViewTaskModal";
 import useSWR from "swr";
 import { getApiService } from "../service/api.service";
 import { Loader } from "lucide-react";
+import useTaskStore from "../providers/task.provider";
 
-const TaskList: React.FC = () => {
+interface Props {
+  data: Tasks;
+  isLoading: boolean;
+}
+const TaskList: React.FC<Props> = ({ data, isLoading }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { setEditableTask } = useTaskStore();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { data, isLoading } = useSWR("/task", getApiService);
-  const tasks: Tasks = data?.data ?? [];
+  const tasks: Tasks = data;
 
   const handleEdit = (task: Task) => {
-    alert(`Editing task: ${task.title}`);
+    setEditableTask(task);
   };
 
   const handleDelete = (taskId: string) => {

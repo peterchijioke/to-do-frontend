@@ -1,8 +1,11 @@
 import React, { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
+import useGetAuthUser from "../hooks/useGetAuthUser";
 
 export default function Navigation() {
+  const { user, userLoading } = useGetAuthUser();
+
   const authToken = useMemo(
     () => localStorage.getItem("userToken"),
     [localStorage.getItem("userToken")]
@@ -24,12 +27,14 @@ export default function Navigation() {
           <Menu className=" text-amber-950" />
         </button>
         <div className=" h-full hidden w-fit md:flex justify-center gap-2">
-          <Link
-            className=" text-amber-950 hover:text-white h-full px-6 font-semibold hover:bg-amber-950 flex items-center justify-center"
-            to="/dashboard"
-          >
-            Dashboard
-          </Link>
+          {authToken && (
+            <Link
+              className=" text-amber-950 hover:text-white h-full px-6 font-semibold hover:bg-amber-950 flex items-center justify-center"
+              to="/dashboard"
+            >
+              Dashboard
+            </Link>
+          )}
           {authToken ? (
             <button
               onClick={logout}
@@ -45,12 +50,22 @@ export default function Navigation() {
               Login
             </Link>
           )}
-          <Link
-            className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
-            to="/signup"
-          >
-            Register
-          </Link>
+          {!authToken && (
+            <Link
+              className=" text-amber-950 hover:text-white h-full font-semibold px-6 hover:bg-amber-950 flex items-center justify-center"
+              to="/signup"
+            >
+              Register
+            </Link>
+          )}
+          {authToken && user && (
+            <Link
+              className=" text-amber-950 h-full capitalize font-semibold px-6  flex items-center justify-center"
+              to="#"
+            >
+              Hi, {user.username}
+            </Link>
+          )}
         </div>
       </div>
     </nav>
